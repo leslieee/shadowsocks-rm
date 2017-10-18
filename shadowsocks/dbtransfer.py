@@ -9,6 +9,7 @@ import socket
 import config
 import json
 import urllib2, urllib
+import requests
 
 
 class DbTransfer(object):
@@ -104,23 +105,59 @@ class DbTransfer(object):
                     logging.info('port:%s ----> id:%s' % (id, rows[0][0]))
                     tran = str(dt_transfer[id])
                     data = {'d': tran, 'node_id': config.NODE_ID, 'u': '0'}
+                    # url = config.API_URL + '/users/' + str(rows[0][0]) + '/traffic?key=' + config.API_PASS
+                    # data = urllib.urlencode(data)
+                    # req = urllib2.Request(url, data)
+                    # response = urllib2.urlopen(req)
+                    # the_page = response.read()
+                    # logging.info('%s - %s - %s' % (url, data, the_page))
+
                     url = config.API_URL + '/users/' + str(rows[0][0]) + '/traffic?key=' + config.API_PASS
-                    data = urllib.urlencode(data)
-                    req = urllib2.Request(url, data)
-                    response = urllib2.urlopen(req)
-                    the_page = response.read()
-                    logging.info('%s - %s - %s' % (url, data, the_page))
+                    payload = "d=%s&node_id=%s&u=0" % (tran, config.NODE_ID)
+                    headers = {
+                        'content-type': "application/x-www-form-urlencoded",
+                        'cache-control': "no-cache",
+                        'postman-token': "12efe9cb-5fac-b144-de92-9b57a8b9701b"
+                        }
+                    response = requests.request("POST", url, data=payload, headers=headers)
+
                     i += 1
                 # online user count
                 data = {'count': i}
+                # url = config.API_URL + '/nodes/' + config.NODE_ID + '/online_count?key=' + config.API_PASS
+                # data = urllib.urlencode(data)
+                # req = urllib2.Request(url, data)
+                # response = urllib2.urlopen(req)
+                # the_page = response.read()
+                # logging.info('%s - %s - %s' % (url, data, the_page))
+
                 url = config.API_URL + '/nodes/' + config.NODE_ID + '/online_count?key=' + config.API_PASS
-                data = urllib.urlencode(data)
-                req = urllib2.Request(url, data)
-                response = urllib2.urlopen(req)
-                the_page = response.read()
-                logging.info('%s - %s - %s' % (url, data, the_page))
+                payload = "count=%s" % (i)
+                headers = {
+                    'content-type': "application/x-www-form-urlencoded",
+                    'cache-control': "no-cache",
+                    'postman-token': "12efe9cb-5fac-b144-de92-9b57a8b9701b"
+                    }
+                response = requests.request("POST", url, data=payload, headers=headers)
+
 
                 # load info
+                # url = config.API_URL + '/nodes/' + config.NODE_ID + '/info?key=' + config.API_PASS
+                # f = open("/proc/loadavg")
+                # load = f.read().split()
+                # f.close()
+                # loadavg = load[0]+' '+load[1]+' '+load[2]+' '+load[3]+' '+load[4]
+                # f = open("/proc/uptime")
+                # t = f.read().split()
+                # uptime = t[0]
+                # f.close()
+                # data = {'load': loadavg, 'uptime': uptime}
+                # data = urllib.urlencode(data)
+                # req = urllib2.Request(url, data)
+                # response = urllib2.urlopen(req)
+                # the_page = response.read()
+                # logging.info('%s - %s - %s' % (url, data, the_page))
+
                 url = config.API_URL + '/nodes/' + config.NODE_ID + '/info?key=' + config.API_PASS
                 f = open("/proc/loadavg")
                 load = f.read().split()
@@ -130,12 +167,13 @@ class DbTransfer(object):
                 t = f.read().split()
                 uptime = t[0]
                 f.close()
-                data = {'load': loadavg, 'uptime': uptime}
-                data = urllib.urlencode(data)
-                req = urllib2.Request(url, data)
-                response = urllib2.urlopen(req)
-                the_page = response.read()
-                logging.info('%s - %s - %s' % (url, data, the_page))
+                payload = "load=%s&uptime=%s" % (loadavg, uptime)
+                headers = {
+                    'content-type': "application/x-www-form-urlencoded",
+                    'cache-control': "no-cache",
+                    'postman-token': "12efe9cb-5fac-b144-de92-9b57a8b9701b"
+                    }
+                response = requests.request("POST", url, data=payload, headers=headers)
             else:
                 logging.warn('Not support panel version %s' % (config.PANEL_VERSION))
                 return
